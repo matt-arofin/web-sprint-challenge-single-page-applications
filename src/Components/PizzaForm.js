@@ -1,8 +1,11 @@
 import *  as yup from 'yup';
+import '../App.css'
 // Pizza form component
 
 
 function orderPizza(props) {
+
+    const  { submit, change, cancel, disabled } = props;
 
     return (
 
@@ -16,7 +19,7 @@ function orderPizza(props) {
                         name='name'
                         type='text' // text input
                     />
-                </label>
+                </label><br/><br/>
                 <label>Size:&nbsp;
                     <select 
                         id='size-dropdown'
@@ -69,7 +72,8 @@ function orderPizza(props) {
                     />
                 </label><br/><br/>
 
-                <button /* submit={onSubmit} disabled={disabled} */>Place Order</button>
+                <button /* submit={onSubmit} */ disabled={disabled}>Place Order</button>
+                <button onClick={cancel}>Clear Form</button>
             </form>
         </div>
     )
