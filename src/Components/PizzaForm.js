@@ -1,5 +1,5 @@
-import '../App.css'
-import{ useHistory } from 'react-router-dom';
+import '../App.css';
+import axios from 'axios';
 
 // Pizza form component
 
@@ -8,11 +8,11 @@ export default function OrderPizza(props) {
 
     const  { submit, change, clear, disabled, errors, values } = props;
 
-    const history = useHistory();
+    // const history = useHistory();
 
     const onSubmit = evt => {
         evt.preventDefault();
-        submit().then(history.push('/success'))
+        submit();
     }
 
     const onChange = evt => {
@@ -20,6 +20,13 @@ export default function OrderPizza(props) {
         const useValue = type === 'checkbox' ? checked : value
         change(name, useValue)
     }
+
+
+    // const onCancel  = evt => {
+    //     evt.preventDefault();
+    //     clear()
+    // }
+
 
 
     return (
@@ -32,7 +39,7 @@ export default function OrderPizza(props) {
                 <div>{errors.size}</div>
             </div>
 
-            <form id='pizza-form' onSubmit={onSubmit}>
+            <form id='pizza-form' /* onSubmit={onSubmit} */>
                 <label>Name:&nbsp;
                     <input
                         id='name-input'
@@ -92,7 +99,6 @@ export default function OrderPizza(props) {
                         />
                     </label><br/>
                 </div><br/>
-                
                 <label>Special Instructions:&nbsp;
                     <input
                         id='special-text'
@@ -103,8 +109,8 @@ export default function OrderPizza(props) {
                     />
                 </label><br/><br/>
 
-                <button value='submit' disabled={disabled}>Place Order</button>
-                <button onClick={clear}>Clear Form</button>
+                <button   onClick={onSubmit} type='submit' id='order-button' disabled={disabled}>Place Order</button>
+                {/* <button onClick={onCancel}>Clear Form</button> */}
             </form>
         </div>
     )

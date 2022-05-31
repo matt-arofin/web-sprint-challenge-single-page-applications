@@ -60,9 +60,10 @@ const App = () => {
       mushroom: formValues.mushroom,
       peppers: formValues.peppers,
       special: formValues.special.trim()
-    }
-    postNewOrder(newOrder)
+    };
+    postNewOrder(newOrder);
   };
+  
 
   const onChange = (name, value) => {
     validate(name, value)
@@ -86,25 +87,15 @@ const App = () => {
       .catch(handleErrors)
       .finally(resetForm)
   }
-  
-  // get list of orders 
-  const getOrders = () => {
-    axios.get(baseURL)
-      .then(res => {setOrders(res.data)})
-      .catch(handleErrors);
-  }
 
   // Validation helper
   const validate = (name, value) => {
     yup.reach(schema, name).validate(value)
-      .then(() => setFormErrors(setFormErrors({...formErrors, [name]: ""})))
-      .catch(err => console.error(err))
+      .then(() => setFormErrors({...formErrors, [name]: ""}))
+      .catch((err) => setFormErrors({...formErrors,[name]: err.errors[0]}))
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // useEffect(() => getOrders(), []);
-
-  // useEffect(() => schema.isValid(formValues).then(valid => setDisabled(!valid), [formValues]))
+  useEffect(() => schema.isValid(formValues).then(valid => setDisabled(!valid), [formValues]))
 
   return (
     <div className='App-container'>
@@ -133,11 +124,11 @@ const App = () => {
               errors={formErrors}
             />
           </Route>
-          <Route exact path="/success">
+          {/* <Route exact path="/success">
             <Order 
               order={orders}
             />
-          </Route>
+          </Route> */}
         </Switch>
       </main>
     </div>
