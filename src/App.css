@@ -25,6 +25,10 @@ nav {
   justify-content: space-evenly;
 }
 
+div {
+  justify-content: center;
+}
+
 
 .link {
   color: #61dafb;

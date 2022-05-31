@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Switch, Route, Link } from 'react-router-dom';
 import Form from './Components/PizzaForm';
-import axios from 'axios'
-import './App.css'
+import schema from './formSchema';
+import Order from './Components/Order';
+import axios from 'axios';
+import * as yup from 'yup';
+import './App.css';
 
 // This should be the homepage 
 // Must include:
@@ -16,12 +19,12 @@ import './App.css'
 // Build out shape of form's data
 const initialFormValues = {
   name: '',
-  size: ['small', 'medium', 'large', 'extra large'],
+  size: '',
   sausage: false,
   chicken: false,
   mushroom: false,
   peppers: false,
-  instructions: ''
+  special: ''
 }
 
 const initialFormErrors = {
@@ -43,7 +46,7 @@ const App = () => {
 
   const [formErrors, setFormErrors] = useState(initialFormErrors);
 
-  const [disabled, setDisabled] = useState(true);
+  const [disabled, setDisabled] = useState(initialDisabled);
 
   const [orders, setOrders] = useState(initialOrders);
 
@@ -56,12 +59,13 @@ const App = () => {
       chicken: formValues.chicken,
       mushroom: formValues.mushroom,
       peppers: formValues.peppers,
-      instructions: formValues.instructions.trim()
+      special: formValues.special.trim()
     }
     postNewOrder(newOrder)
   };
 
   const onChange = (name, value) => {
+    validate(name, value)
     setFormValues({...formValues, [name]: value})
   };
 
@@ -86,16 +90,21 @@ const App = () => {
   // get list of orders 
   const getOrders = () => {
     axios.get(baseURL)
-    .then(res => console.log(res.data.data))
-    .catch(handleErrors);
+      .then(res => {setOrders(res.data)})
+      .catch(handleErrors);
   }
 
   // Validation helper
-  const validate = () => {
-    
+  const validate = (name, value) => {
+    yup.reach(schema, name).validate(value)
+      .then(() => setFormErrors(setFormErrors({...formErrors, [name]: ""})))
+      .catch(err => console.error(err))
   }
 
-  useEffect(() => getOrders(), []); 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // useEffect(() => getOrders(), []);
+
+  // useEffect(() => schema.isValid(formValues).then(valid => setDisabled(!valid), [formValues]))
 
   return (
     <div className='App-container'>
@@ -118,10 +127,15 @@ const App = () => {
             <Form 
               submit={onSubmit}
               change={onChange}
-              cancel={resetForm}
+              clear={resetForm}
               disabled={disabled}
               values={formValues}
               errors={formErrors}
+            />
+          </Route>
+          <Route exact path="/success">
+            <Order 
+              order={orders}
             />
           </Route>
         </Switch>
